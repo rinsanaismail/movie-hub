@@ -1,0 +1,153 @@
+
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Movie Collection</title>
+  <link rel="stylesheet" href="{% static 'css/movie_list.css' %}">
+</head>
+<body>
+
+  <!-- ── Sidebar Navigation ── -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">MC</div>
+    <div class="sidebar-icons">
+
+      <!-- Home -->
+      <div class="sidebar-icon active">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        </svg>
+      </div>
+
+      <!-- Search -->
+      <div class="sidebar-icon">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+        </svg>
+      </div>
+
+      <!-- Films -->
+      <div class="sidebar-icon">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z"/>
+        </svg>
+      </div>
+
+      <!-- Bookmark / Wishlist -->
+      <div class="sidebar-icon">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2z"/>
+        </svg>
+      </div>
+
+    </div>
+  </nav>
+
+  <!-- ── Main Content ── -->
+  <div class="main-content">
+
+    <!-- ── Hero Banner (first movie as featured) ── -->
+    {% with movies.0 as featured %}
+    {% if featured %}
+    <section class="hero-banner">
+      <div class="hero-bg-art"></div>
+      <div class="hero-bg-overlay"></div>
+      <div class="hero-content">
+        <div class="hero-badge">in {{ featured.language.name }} Today • Newly Added</div>
+        <h1 class="hero-title">{{ featured.movie_name }}</h1>
+        <div class="hero-meta">
+          <span>{{ featured.released_year }}</span>
+          <span>{{ featured.genre.name }}</span>
+          {% if featured.rating %}<span>★ {{ featured.rating }}</span>{% endif %}
+        </div>
+        {% if featured.description %}
+        <p class="hero-desc">{{ featured.description }}</p>
+        {% endif %}
+        <div class="hero-actions">
+          <a href="{% url 'movie_detail' featured.id %}" class="btn-watch">Watch Now</a>
+          <a href="{% url 'movie_detail' featured.id %}" class="btn-add">+</a>
+        </div>
+      </div>
+    </section>
+    {% endif %}
+    {% endwith %}
+
+    <!-- ── Search & Filter Bar ── -->
+    <div class="search-bar-section">
+      <form method="GET">
+        <input
+          type="text"
+          name="search"
+          placeholder="Search movies..."
+          value="{{ search }}"
+        >
+        <select name="language">
+          <option value="">All Languages</option>
+          {% for language in languages %}
+          <option
+            value="{{ language.id }}"
+            {% if selected_language == language.id|stringformat:"s" %}selected{% endif %}
+          >{{ language.name }}</option>
+          {% endfor %}
+        </select>
+        <select name="genre">
+          <option value="">All Genres</option>
+          {% for genre in genres %}
+          <option
+            value="{{ genre.id }}"
+            {% if selected_genre == genre.id|stringformat:"s" %}selected{% endif %}
+          >{{ genre.name }}</option>
+          {% endfor %}
+        </select>
+        <button type="submit">Search</button>
+      </form>
+    </div>
+
+    <!-- ── Movie Row ── -->
+    <section class="row-section">
+      <div class="row-header">
+        <span class="row-title">My Collection</span>
+        <span class="row-count">{{ movies|length }} movies</span>
+      </div>
+
+      <div class="movie-row">
+
+        {% for movie in movies %}
+        <a class="movie-card" href="{% url 'movie_detail' movie.id %}">
+
+          {% if movie.image %}
+            <img
+              class="card-poster"
+              src="{{ movie.image.url }}"
+              alt="{{ movie.movie_name }}"
+            >
+          {% else %}
+            <div class="card-no-poster">No Image</div>
+          {% endif %}
+
+          <div class="card-info">
+            <div class="card-title">{{ movie.movie_name }}</div>
+            <div class="card-meta">
+              <span class="card-language">{{ movie.language.name }}</span>
+              {% if movie.rating %}
+              <span class="card-rating">{{ movie.rating }}</span>
+              {% endif %}
+            </div>
+          </div>
+
+        </a>
+        {% empty %}
+        <p class="empty-state">No movies found.</p>
+        {% endfor %}
+
+      </div>
+    </section>
+
+  </div><!-- end .main-content -->
+
+</body>
+</html>

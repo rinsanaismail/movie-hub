@@ -1,0 +1,80 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ movie.movie_name }}</title>
+  <link rel="stylesheet" href="{% static 'css/movie_detail.css' %}" />
+</head>
+<body>
+
+  <!-- Back Navigation -->
+  <a href="{% url 'movie_list' %}" class="back-link">Back to Movies</a>
+
+  <!-- Hero Section -->
+  <div class="movie-hero">
+
+    <!-- Poster -->
+    <div class="poster-wrapper">
+      <div class="poster-glow"></div>
+      {% if movie.image %}
+        <img
+          class="movie-poster"
+          src="{{ movie.image.url }}"
+          alt="{{ movie.movie_name }}"
+        />
+      {% else %}
+        <div class="no-poster">No Image</div>
+      {% endif %}
+    </div>
+
+    <!-- Details -->
+    <div class="movie-details">
+
+      <h1 class="movie-title">{{ movie.movie_name }}</h1>
+
+      <div class="rating-badge">{{ movie.rating }} / 10</div>
+
+      <!-- Genre & Language Pills -->
+      <div class="meta-pills">
+        <span class="pill">{{ movie.language.name }}</span>
+        <span class="pill">{{ movie.genre.name }}</span>
+        <span class="pill">{{ movie.released_year }}</span>
+      </div>
+
+      <!-- Info Grid -->
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="info-label">Director</span>
+          <span class="info-value">{{ movie.director }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Actor</span>
+          <span class="info-value">{{ movie.actor }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Actress</span>
+          <span class="info-value">{{ movie.actress }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Collection</span>
+          <span class="info-value">{{ movie.collection }}</span>
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <div class="section-divider"></div>
+
+      <!-- Description -->
+      <p class="description-label">Description</p>
+      <p class="description-text">{{ movie.description }}</p>
+
+      <p class="created-at">Added on {{ movie.created_at }}</p>
+
+    </div>
+  </div>
+
+</body>
+</html>
